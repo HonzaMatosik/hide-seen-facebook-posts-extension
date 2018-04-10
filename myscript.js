@@ -8,10 +8,16 @@ function appendMessage(el, message, color) {
 
 function markAsRead() {
     let unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen)')
-    
+
     for (let i = 0; i < unobserved.length; i++) {
         let post = unobserved[i]
-        observer.observe(post);
+        if (isSeen(post.getAttribute('data-dedupekey'))) {
+            appendMessage(post, "Post: Seen", "red")
+            post.className += " seen";
+            post.style.display= "none";
+        } else {
+            observer.observe(post)
+        }
     }
 }
 
@@ -21,6 +27,7 @@ function intersectionCallback(entry) {
 
     if(-position.y > position.height) {
         let el = entry.target
+        setSeen(el.getAttribute('data-dedupekey'))
         observer.unobserve(el)
         appendMessage(el, "Post: Seen", "blue")
         el.className += " seen";
@@ -32,23 +39,32 @@ function startTimer() {
         clearInterval(interval)
         markAsRead()
         startTimer()
-    }, 5000)
+    }, 1000)
 }
 
 function init() {
     let feed = document.querySelector('[id^="topnews_main_stream_"]')
+    appendMessage(feed, "Main Feed:", "black")
+
     const observerOptions = {
         root: null,
         rootMargin: "0px",
         threshold: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
     }
     observer = new IntersectionObserver(intersectionCallback, observerOptions)
-    appendMessage(feed, "Main Feed:", "black")
+    
     markAsRead()
     startTimer()
 }
 
+function setSeen(id) {
+    
+    localStorage.setItem(id, true)
+}
 
+function isSeen(id) {
+    return localStorage.getItem(id)
+}
 
 init()
 
