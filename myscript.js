@@ -1,18 +1,9 @@
-function appendMessage(el, message, color) {
-    var msgElement = document.createElement("p")
-    msgElement.appendChild(document.createTextNode(message))
-    el.style.border = "2px solid " + color
-
-    el.insertBefore(msgElement, el.firstChild)
-}
-
 function markAsRead() {
     let unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen)')
 
     for (let i = 0; i < unobserved.length; i++) {
         let post = unobserved[i]
         if (isSeen(post.getAttribute('data-dedupekey'))) {
-            appendMessage(post, "Post: Seen", "red")
             post.className += " seen";
             post.style.display= "none";
         } else {
@@ -29,7 +20,6 @@ function intersectionCallback(entry) {
         let el = entry.target
         setSeen(el.getAttribute('data-dedupekey'))
         observer.unobserve(el)
-        appendMessage(el, "Post: Seen", "blue")
         el.className += " seen";
     }
 }
@@ -43,9 +33,6 @@ function startTimer() {
 }
 
 function init() {
-    let feed = document.querySelector('[id^="topnews_main_stream_"]')
-    appendMessage(feed, "Main Feed:", "black")
-
     const observerOptions = {
         root: null,
         rootMargin: "0px",
@@ -58,7 +45,6 @@ function init() {
 }
 
 function setSeen(id) {
-    
     localStorage.setItem(id, true)
 }
 
