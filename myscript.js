@@ -50,4 +50,6 @@ function isSeen(id) {
     return localStorage.getItem(id)
 }
 
-init()
+window.onload = function() {
+    init()
+}
