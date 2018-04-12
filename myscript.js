@@ -1,14 +1,9 @@
 function markAsRead() {
-    let unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen)')
+    let unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen):not(.watching)')
 
     for (let i = 0; i < unobserved.length; i++) {
         let post = unobserved[i]
-        if (isSeen(post.getAttribute('data-dedupekey'))) {
-            post.className += " seen";
-            post.style.display= "none";
-        } else {
-            observer.observe(post)
-        }
+        isSeen(post)
     }
 }
 
@@ -20,7 +15,8 @@ function intersectionCallback(entry) {
         let el = entry.target
         setSeen(el.getAttribute('data-dedupekey'))
         observer.unobserve(el)
-        el.className += " seen";
+        el.className += " seen"
+        el.style.border= "2px solid blue"
     }
 }
 
@@ -32,7 +28,17 @@ function startTimer() {
     }, 1000)
 }
 
+function initDexieDB() {
+    var db = new Dexie("seen_posts")
+    db.version(1).stores({
+        posts: 'id'
+    })
+    return db
+    
+}
+
 function init() {
+    db = initDexieDB()
     const observerOptions = {
         root: null,
         rootMargin: "0px",
@@ -45,14 +51,26 @@ function init() {
 }
 
 function setSeen(id) {
-    localStorage.setItem(id, true)
+    db.posts.put({id: id})
 }
 
-function isSeen(id) {
-    return localStorage.getItem(id)
+function isSeen(post) {
+    let id = post.getAttribute('data-dedupekey')
+    db.posts.get(id).then(function (row) {
+        if (typeof row != 'undefined') {
+            post.className += " seen"
+            post.style.border= "2px solid blue"
+        } else {
+            post.className += " watching"
+            observer.observe(post)
+        }
+    })
 }
 
-init()
+window.onload = function() {
+    init()
+};
+
 
 
 

@@ -6,7 +6,7 @@
 "content_scripts": [
     {
       "matches": ["https://www.facebook.com/*"],
-      "js": ["myscript.js"]
+      "js": ["dexie.min.js", "myscript.js"]
     }
   ]
 }
