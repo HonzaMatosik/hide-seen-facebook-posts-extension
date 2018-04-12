@@ -1,14 +1,9 @@
 function markAsRead() {
-    const unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen)')
+    const unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen):not(.watching)')
 
     for (let i = 0; i < unobserved.length; i++) {
         const post = unobserved[i]
-        if (isSeen(post.getAttribute('data-dedupekey'))) {
-            post.classList.add('seen')
-            post.style.display = 'none'
-        } else {
-            observer.observe(post)
-        }
+        isSeen(post)
     }
 }
 
@@ -32,7 +27,16 @@ function startTimer() {
     }, 1000)
 }
 
+function initDexieDB() {
+    const db = new Dexie("seen_posts")
+    db.version(1).stores({
+        posts: 'id'
+    })
+    return db
+}
+
 function init() {
+    db = initDexieDB()
     const observerOptions = {
         threshold: [ 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ],
     }
@@ -43,11 +47,20 @@ function init() {
 }
 
 function setSeen(id) {
-    localStorage.setItem(id, true)
+    db.posts.put({id: id})
 }
 
-function isSeen(id) {
-    return localStorage.getItem(id)
+function isSeen(post) {
+    const id = post.getAttribute('data-dedupekey')
+    db.posts.get(id).then(function (row) {
+        if (typeof row != 'undefined') {
+            post.classList.add('seen')
+            post.style.display = 'none'
+        } else {
+            post.classList.add('watching')
+            observer.observe(post)
+        }
+    })
 }
 
 window.onload = function() {
