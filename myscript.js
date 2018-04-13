@@ -50,6 +50,7 @@ function addNotificationBar() {
 
     const feed = document.querySelector('[id^="topnews_main_stream_"]')
     feed.parentElement.insertBefore(div, feed)
+    feed.style = 'padding-bottom: ' + screen.height + 'px'
 }
 
 function updateCounter() {
