@@ -1,7 +1,7 @@
 {
 "name":"Hide seen FB posts",
 "description":"Hide seen Facebook posts",
-"version":"0.1",
+"version":"0.2",
 "author": "Jan Matošík",
 "manifest_version":2,
 "content_scripts": [
