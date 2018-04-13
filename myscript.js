@@ -43,11 +43,27 @@ function initMutationObserver() {
     mutationObserver.observe(target, config)
 }
 
+function addNotificationBar() {
+    var div = document.createElement('div')
+    div.setAttribute('style', 'background-color: white;padding: 10px;margin-bottom: 10px;border-radius: 4px;border: 1px solid #dedfe2;')
+    div.innerHTML = 'Skryto <span id="seen-posts-notification-2423423">' + counter +'</span> přečtených příspěvků'
+
+    const feed = document.querySelector('[id^="topnews_main_stream_"]')
+    feed.parentElement.insertBefore(div, feed)
+}
+
+function updateCounter() {
+    const counterElement = document.getElementById('seen-posts-notification-2423423')
+    counterElement.innerHTML = ++counter
+}
+
 function init() {
     db = initDexieDB()
     observer = new IntersectionObserver(intersectionCallback, {threshold: [ 0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0 ]})
-    initMutationObserver();
+    initMutationObserver()
     checkInitialPosts()
+    counter = 0
+    addNotificationBar()
 }
 
 function setSeen(id) {
@@ -59,6 +75,7 @@ function isSeen(post) {
     db.posts.get(id).then(function (row) {
         if (typeof row != 'undefined') {
             post.classList.add('seen')
+            updateCounter()
         } else {
             post.style.display = ''
             if (! post.classList.contains('watching')) {
