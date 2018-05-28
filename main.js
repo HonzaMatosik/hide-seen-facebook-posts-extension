@@ -26,43 +26,25 @@ function intersectionCallback(entry) {
 
 function waitForMainStream() {
 	return new Promise((resolve, reject) => {
-		const target = document.body
-		const config = { attributes: false, childList: true, characterData: false, subtree: true }
-		const observer = new MutationObserver(function(mutations, observer) {
-
-			mutations.forEach(function(mutation) {
-				if(mutation.target.querySelector('[id^="'+mainStreamIdPrefix+'"]') != null) {
-					console.log("mainstream observed!")
-					observer.disconnect()
-					resolve()
-				}
-			})
-		})
-		if (document.querySelector('[id^="'+mainStreamIdPrefix+'"]') != null) {
-			console.log("mainstream allready here")
-	       	resolve()
-	    }
-		observer.observe(target, config)
+		let interval = setInterval(function () {
+			if (document.querySelector('[id^="'+mainStreamIdPrefix+'"]') != null) {
+				console.log("mainstream found")
+				clearInterval(interval)
+		       	resolve()
+		    }
+		}, 100)
 	})
 }
 
 function waitForMainStreamRemove() {
 	return new Promise((resolve, reject) => {
-		const target = document.querySelector('[id^="'+mainStreamIdPrefix+'"]')
-		const config = { attributes: false, childList: true, characterData: false, subtree: true }
-		const observer = new MutationObserver(function(mutations, observer) {
-			mutations.forEach(function(mutation) {
-			    var nodes = Array.from(mutation.removedNodes)
-			    var match = nodes.some(parent => parent.contains(target))
-			    if (match) {
-			    	console.log("mainstream removed!")
-			      	observer.disconnect()
-			      	resolve()
-			    }
-
-			})
-		})
-		observer.observe(document.body, config)
+		let interval = setInterval(function () {
+			if (document.querySelector('[id^="'+mainStreamIdPrefix+'"]') == null) {
+				console.log("mainstream removed!")
+				clearInterval(interval)
+				resolve()
+			}
+		}, 100)
 	})
 }
 
