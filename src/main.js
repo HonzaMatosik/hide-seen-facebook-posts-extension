@@ -106,12 +106,12 @@ function addNotificationBar() {
 
     let showHiddenPostsDiv = document.createElement('div')
     showHiddenPostsDiv.appendChild(document.createTextNode("Show hidden posts"))
-    showHiddenPostsDiv.addEventListener("click", showAllPosts);
+    showHiddenPostsDiv.addEventListener("click", showAllPosts)
 
 
-	div.appendChild(span);
+	div.appendChild(span)
 	div.appendChild(document.createTextNode("seen posts hidden."))
-	div.appendChild(showHiddenPostsDiv);
+	div.appendChild(showHiddenPostsDiv)
 
     const feed = document.querySelector('[id^="'+mainStreamIdPrefix+'"]')
     feed.parentElement.insertBefore(div, feed)
@@ -137,9 +137,9 @@ async function startLoop() {
 }
 
 function getRandomInt(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min)) + min //The maximum is exclusive and the minimum is inclusive
 }
 
 function generateRandom(type) {
@@ -193,7 +193,7 @@ function showAllPosts() {
 	
 	const button = document.getElementById(buttonId)
 	button.textContent = "Refresh to start hiding seen posts again"
-	button.removeEventListener("click", showAllPosts);
+	button.removeEventListener("click", showAllPosts)
 	button.addEventListener("click", function(){
 		window.location.reload(false)
 	})
