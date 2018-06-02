@@ -1,7 +1,7 @@
 {
 "name":"Hide seen Facebook posts",
 "description":"When you scroll post out of top of screen it's tagged and after reload you won't see it again.",
-"version":"0.2.1",
+"version":"0.2.2",
 "author": "Jan Matošík",
 "manifest_version":2,
 "content_scripts": [
