@@ -59,8 +59,9 @@ function checkInitialPosts() {
 }
 
 function updateCounter() {
-    const counterElement = document.getElementById('seen-posts-notification-2423423')
-    counterElement.innerHTML = ++counter
+    const counterElement = document.getElementById(barId)
+    const hiddenPostCount = document.querySelectorAll(".seen").length
+    counterElement.innerHTML = hiddenPostCount
 }
 
 function isSeen(post) {
@@ -100,7 +101,7 @@ function initMutationObserver() {
 function addNotificationBar() {
     var div = document.createElement('div')
     div.setAttribute('style', 'background-color: white;padding: 10px;margin: 0px -1px 10px;border-radius: 4px;border: 1px solid #dedfe2;')
-    div.innerHTML = 'Skryto <span id="seen-posts-notification-2423423">' + counter +'</span> přečtených příspěvků'
+    div.innerHTML = 'Skryto <span id="' + barId + '"></span> přečtených příspěvků'
 
     const feed = document.querySelector('[id^="topnews_main_stream_"]')
     feed.parentElement.insertBefore(div, feed)
@@ -112,7 +113,6 @@ function start() {
 	running = true
 	checkInitialPosts()
 	initMutationObserver()
-	counter = 0
     addNotificationBar()
 }
 
@@ -129,6 +129,7 @@ async function startLoop() {
 }
 
 mainStreamIdPrefix = "topnews_main_stream_"
+barId = "seen-posts-notification-2423423"
 db = initDexieDB()
 observer = new IntersectionObserver(intersectionCallback, {threshold: [ 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 ]})
 
