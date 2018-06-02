@@ -105,12 +105,13 @@ function addNotificationBar() {
     span.appendChild(document.createTextNode("0"))
 
     let showHiddenPostsDiv = document.createElement('div')
+    showHiddenPostsDiv.setAttribute('id', buttonId)
     showHiddenPostsDiv.appendChild(document.createTextNode("Show hidden posts"))
     showHiddenPostsDiv.addEventListener("click", showAllPosts)
 
 
 	div.appendChild(span)
-	div.appendChild(document.createTextNode("seen posts hidden."))
+	div.appendChild(document.createTextNode(" seen posts hidden."))
 	div.appendChild(showHiddenPostsDiv)
 
     const feed = document.querySelector('[id^="'+mainStreamIdPrefix+'"]')
