@@ -101,7 +101,7 @@ function initMutationObserver() {
 function addNotificationBar() {
     var div = document.createElement('div')
     div.setAttribute('style', 'background-color: white;padding: 10px;margin: 0px -1px 10px;border-radius: 4px;border: 1px solid #dedfe2;')
-    div.innerHTML = 'Skryto <span id="' + barId + '"></span> přečtených příspěvků'
+    div.innerHTML = '<span id="' + barId + '"></span> seen posts hidden.'
 
     const feed = document.querySelector('[id^="topnews_main_stream_"]')
     feed.parentElement.insertBefore(div, feed)
