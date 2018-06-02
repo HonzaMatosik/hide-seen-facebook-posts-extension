@@ -60,7 +60,7 @@ function updateCounter() {
     const counterElement = document.getElementById(barId)
     if (counterElement != null) {
 	    const hiddenPostCount = document.querySelectorAll('.' + seenClass).length
-	    counterElement.innerHTML = hiddenPostCount
+	    counterElement.textContent = hiddenPostCount
 	}
 }
 
@@ -99,12 +99,18 @@ function initMutationObserver() {
 function addNotificationBar() {
     let div = document.createElement('div')
     div.setAttribute('style', 'background-color: white;padding: 10px;margin: 0px -1px 10px;border-radius: 4px;border: 1px solid #dedfe2;')
-    div.innerHTML = '<span id="' + barId + '">0</span> seen posts hidden.'
+    
+    let span = document.createElement('span')
+    span.setAttribute('id', barId)
+    span.appendChild(document.createTextNode("0"))
 
     let showHiddenPostsDiv = document.createElement('div')
-    showHiddenPostsDiv.setAttribute('id', buttonId)
-    showHiddenPostsDiv.innerHTML = "Show hidden posts"
+    showHiddenPostsDiv.appendChild(document.createTextNode("Show hidden posts"))
     showHiddenPostsDiv.addEventListener("click", showAllPosts);
+
+
+	div.appendChild(span);
+	div.appendChild(document.createTextNode("seen posts hidden."))
 	div.appendChild(showHiddenPostsDiv);
 
     const feed = document.querySelector('[id^="'+mainStreamIdPrefix+'"]')
@@ -172,10 +178,10 @@ function injectStyles() {
 	}
 	`
 
-	const head = document.head;
-	const style = document.createElement("style");
-	style.innerHTML = styles;
-	head.appendChild(style);
+	const head = document.head
+	const style = document.createElement("style")
+	style.appendChild(document.createTextNode(styles))
+	head.appendChild(style)
 }
 
 function showAllPosts() {
@@ -186,7 +192,7 @@ function showAllPosts() {
 	}
 	
 	const button = document.getElementById(buttonId)
-	button.innerHTML = "Refresh to start hiding seen posts again"
+	button.textContent = "Refresh to start hiding seen posts again"
 	button.removeEventListener("click", showAllPosts);
 	button.addEventListener("click", function(){
 		window.location.reload(false)
