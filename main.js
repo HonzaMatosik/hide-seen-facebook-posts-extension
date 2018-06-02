@@ -60,8 +60,10 @@ function checkInitialPosts() {
 
 function updateCounter() {
     const counterElement = document.getElementById(barId)
-    const hiddenPostCount = document.querySelectorAll('.' + seenClass).length
-    counterElement.innerHTML = hiddenPostCount
+    if (counterElement != null) {
+	    const hiddenPostCount = document.querySelectorAll('.' + seenClass).length
+	    counterElement.innerHTML = hiddenPostCount
+	}
 }
 
 function isSeen(post) {
@@ -99,14 +101,18 @@ function initMutationObserver() {
 }
 
 function addNotificationBar() {
-    var div = document.createElement('div')
+    let div = document.createElement('div')
     div.setAttribute('style', 'background-color: white;padding: 10px;margin: 0px -1px 10px;border-radius: 4px;border: 1px solid #dedfe2;')
     div.innerHTML = '<span id="' + barId + '">0</span> seen posts hidden.'
-    div.innerHTML += '<div id="' + buttonId + '">Show hidden posts</div>';
 
-    const feed = document.querySelector('[id^="topnews_main_stream_"]')
+    let showHiddenPostsDiv = document.createElement('div')
+    showHiddenPostsDiv.setAttribute('id', buttonId)
+    showHiddenPostsDiv.innerHTML = "Show hidden posts"
+    showHiddenPostsDiv.addEventListener("click", showAllPosts);
+	div.appendChild(showHiddenPostsDiv);
+
+    const feed = document.querySelector('[id^="'+mainStreamIdPrefix+'"]')
     feed.parentElement.insertBefore(div, feed)
-    feed.style = 'padding-bottom: ' + screen.height + 'px'
 }
 
 function start() {
@@ -148,6 +154,7 @@ function generateRandom(type) {
 }
 
 function injectStyles() {
+	let feedId = document.querySelector('[id^="'+mainStreamIdPrefix+'"]').getAttribute('id')
 	barId = generateRandom("#")
 	seenClass = generateRandom(".")
 	watchingClass = generateRandom(".")
@@ -165,12 +172,32 @@ function injectStyles() {
 	#`+buttonId+`:hover {
 		background-color: #f6f7f9
 	}
+	#`+feedId+` {
+		padding-bottom: `+screen.height+`px
+	}
 	`
 
 	const head = document.head;
 	const style = document.createElement("style");
 	style.innerHTML = styles;
 	head.appendChild(style);
+}
+
+function showAllPosts() {
+	mutationObserver.disconnect()
+	hiddenPosts = document.querySelectorAll('.' + seenClass)
+	for (let i = 0; i < hiddenPosts.length; i++) {
+		hiddenPosts[i].style.display = ''
+	}
+	
+	const button = document.getElementById(buttonId)
+	button.innerHTML = "Refresh to start hiding seen posts again"
+	button.removeEventListener("click", showAllPosts);
+	button.addEventListener("click", function(){
+		window.location.reload(false)
+	})
+
+	document.getElementById(barId).outerHTML = "0"
 }
 
 mainStreamIdPrefix = "topnews_main_stream_"
