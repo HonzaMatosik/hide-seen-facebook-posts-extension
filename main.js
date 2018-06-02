@@ -20,7 +20,7 @@ function intersectionCallback(entry) {
         const el = entry.target
         setSeen(el.getAttribute('data-dedupekey'), el.getAttribute('data-timestamp'))
         observer.unobserve(el)
-        el.classList.add('seen')
+        el.classList.add(seenClass)
     }
 }
 
@@ -49,7 +49,7 @@ function waitForMainStreamRemove() {
 }
 
 function checkInitialPosts() {
-    const unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.seen):not(.watching)')
+    const unobserved = document.querySelectorAll('[id^="hyperfeed_story_id_"]:not(.'+seenClass+'):not(.'+watchingClass+')')
 
     for (let i = 0; i < unobserved.length; i++) {
         const post = unobserved[i]
@@ -60,7 +60,7 @@ function checkInitialPosts() {
 
 function updateCounter() {
     const counterElement = document.getElementById(barId)
-    const hiddenPostCount = document.querySelectorAll(".seen").length
+    const hiddenPostCount = document.querySelectorAll('.' + seenClass).length
     counterElement.innerHTML = hiddenPostCount
 }
 
@@ -69,12 +69,12 @@ function isSeen(post) {
     if (id != null) {
 	    db.posts.get(id).then(function (row) {
 	        if (typeof row != 'undefined') {
-	            post.classList.add('seen')
+	            post.classList.add(seenClass)
 	            updateCounter()
 	        } else {
 	            post.style.display = ''
-	            if (! post.classList.contains('watching')) {
-	                post.classList.add('watching')
+	            if (! post.classList.contains(watchingClass)) {
+	                post.classList.add(watchingClass)
 	                observer.observe(post)
 	            }
 	        }
@@ -101,7 +101,8 @@ function initMutationObserver() {
 function addNotificationBar() {
     var div = document.createElement('div')
     div.setAttribute('style', 'background-color: white;padding: 10px;margin: 0px -1px 10px;border-radius: 4px;border: 1px solid #dedfe2;')
-    div.innerHTML = '<span id="' + barId + '"></span> seen posts hidden.'
+    div.innerHTML = '<span id="' + barId + '">0</span> seen posts hidden.'
+    div.innerHTML += '<div id="' + buttonId + '">Show hidden posts</div>';
 
     const feed = document.querySelector('[id^="topnews_main_stream_"]')
     feed.parentElement.insertBefore(div, feed)
@@ -128,9 +129,54 @@ async function startLoop() {
 	}, 100)
 }
 
+function getRandomInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min; //The maximum is exclusive and the minimum is inclusive
+}
+
+function generateRandom(type) {
+	var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+	while (true) {
+		let firstLetter = possible[getRandomInt(0, 51)]
+		let length = getRandomInt(3, 10)
+		let rand = Math.random().toString(36).substr(2, length)
+		let name = firstLetter + rand
+		if (document.querySelector(name) == null) 
+			return name 
+	}
+}
+
+function injectStyles() {
+	barId = generateRandom("#")
+	seenClass = generateRandom(".")
+	watchingClass = generateRandom(".")
+	buttonId = generateRandom("#")
+
+	let styles = `
+	#`+buttonId+` {
+		float: right;
+		color: #365899;
+		font-weight: 700;
+		cursor: pointer;
+		padding: 4px;
+		margin: -4px;
+	}
+	#`+buttonId+`:hover {
+		background-color: #f6f7f9
+	}
+	`
+
+	const head = document.head;
+	const style = document.createElement("style");
+	style.innerHTML = styles;
+	head.appendChild(style);
+}
+
 mainStreamIdPrefix = "topnews_main_stream_"
-barId = "seen-posts-notification-2423423"
+
 db = initDexieDB()
+injectStyles()
 observer = new IntersectionObserver(intersectionCallback, {threshold: [ 0.0, 0.2, 0.4, 0.6, 0.8, 1.0 ]})
 
 running = false
