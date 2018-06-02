@@ -28,7 +28,6 @@ function waitForMainStream() {
 	return new Promise((resolve, reject) => {
 		let interval = setInterval(function () {
 			if (document.querySelector('[id^="'+mainStreamIdPrefix+'"]') != null) {
-				console.log("mainstream found")
 				clearInterval(interval)
 		       	resolve()
 		    }
@@ -40,7 +39,6 @@ function waitForMainStreamRemove() {
 	return new Promise((resolve, reject) => {
 		let interval = setInterval(function () {
 			if (document.querySelector('[id^="'+mainStreamIdPrefix+'"]') == null) {
-				console.log("mainstream removed!")
 				clearInterval(interval)
 				resolve()
 			}
@@ -81,8 +79,6 @@ function isSeen(post) {
 	            }
 	        }
 	    })
-	} else {
-		console.log(post)
 	}
 }
 
@@ -116,7 +112,6 @@ function addNotificationBar() {
 }
 
 function start() {
-	console.log("Starting!")
 	running = true
 	checkInitialPosts()
 	initMutationObserver()
